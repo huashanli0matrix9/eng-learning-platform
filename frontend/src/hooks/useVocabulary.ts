@@ -88,6 +88,37 @@ export function useDueWords() {
   })
 }
 
+export function useMarkReviewed() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (wordId: number) => {
+      const { data } = await api.post('/progress/mark_reviewed/', { word_id: wordId })
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dueWords'] })
+      queryClient.invalidateQueries({ queryKey: ['vocabularyStats'] })
+      queryClient.invalidateQueries({ queryKey: ['userProgress'] })
+      queryClient.invalidateQueries({ queryKey: ['dailyWords'] })
+    },
+  })
+}
+
+export function useRecordReview() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ wordId, correct }: { wordId: number; correct: boolean }) => {
+      const { data } = await api.post('/progress/review/', { word_id: wordId, correct })
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dueWords'] })
+      queryClient.invalidateQueries({ queryKey: ['vocabularyStats'] })
+      queryClient.invalidateQueries({ queryKey: ['userProgress'] })
+    },
+  })
+}
+
 export function useReviewWord() {
   const queryClient = useQueryClient()
   return useMutation({
