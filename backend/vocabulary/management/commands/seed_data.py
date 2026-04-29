@@ -270,7 +270,7 @@ CRIME_LAW = [
     ("defense", "noun", "the case presented by the accused party", "protection", "The defense lawyer argued for his client's innocence.", "intermediate"),
     ("deterrent", "noun", "something that discourages an action", "discouragement", "Long prison sentences act as a deterrent to crime.", "advanced"),
     ("rehabilitation", "noun", "the process of restoring to normal life", "reintegration", "The prison focuses on rehabilitation rather than punishment.", "advanced"),
-    ("jurisdiction", "noun", "the official power to    ("jurisdiction", "noun", "the official power to make legal decisions", "authority", "The court has jurisdiction over this case.", "advanced"),
+    ("jurisdiction", "noun", "the official power to make legal decisions", "authority", "The court has jurisdiction over this case.", "advanced"),
     ("acquittal", "noun", "a judgment that a person is not guilty", "exoneration", "The defendant celebrated his acquittal.", "advanced"),
     ("appeal", "noun", "a request to a higher court to change a decision", "petition", "The lawyer filed an appeal against the sentence.", "advanced"),
     ("arbitration", "noun", "the use of an independent person to settle a dispute", "mediation", "The dispute was settled through arbitration.", "advanced"),
