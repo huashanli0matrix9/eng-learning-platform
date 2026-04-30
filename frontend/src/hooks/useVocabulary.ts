@@ -36,21 +36,21 @@ export function useWord(id: number | string) {
 }
 
 export function useDailyWords(count = 10) {
-  return useQuery<{ results: Word[] }>({
+  return useQuery<Word[]>({
     queryKey: ['dailyWords', count],
     queryFn: async () => {
       const { data } = await api.get('/words/daily/', { params: { count } })
-      return data
+      return data.results ?? data
     },
   })
 }
 
 export function useRandomWords(count = 10) {
-  return useQuery<{ results: Word[] }>({
+  return useQuery<Word[]>({
     queryKey: ['randomWords', count],
     queryFn: async () => {
       const { data } = await api.get('/words/random/', { params: { count } })
-      return data
+      return data.results ?? data
     },
   })
 }
