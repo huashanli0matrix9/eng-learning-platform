@@ -79,11 +79,11 @@ export function useUserProgress() {
 }
 
 export function useDueWords() {
-  return useQuery<PaginatedResponse<UserProgress>>({
+  return useQuery<UserProgress[]>({
     queryKey: ['dueWords'],
     queryFn: async () => {
       const { data } = await api.get('/progress/due_words/')
-      return data
+      return data.results ?? data
     },
   })
 }
