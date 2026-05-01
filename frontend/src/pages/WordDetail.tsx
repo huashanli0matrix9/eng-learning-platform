@@ -332,12 +332,12 @@ export default function WordDetail() {
                 onClick={() => setActiveStep(step.key)}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border transition-colors whitespace-nowrap',
-                  completed
+                  activeStep === step.key
+                    ? 'bg-blue-600/30 text-blue-300 border-blue-600/40'
+                    : completed
                     ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30'
                     : next
                     ? 'bg-blue-600/20 text-blue-400 border-blue-600/30'
-                    : activeStep === step.key
-                    ? 'bg-blue-600/30 text-blue-300 border-blue-600/40'
                     : 'bg-slate-800 text-slate-500 border-slate-700'
                 )}
               >
