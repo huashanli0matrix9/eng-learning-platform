@@ -42,25 +42,22 @@ const difficultyStyles: Record<string, string> = {
 function CollapsibleSection({
   icon: Icon,
   title,
-  defaultOpen = false,
+  isOpen,
   children,
   step,
   isNext,
-  onOpen,
+  onToggle,
 }: {
   icon: React.ElementType
   title: string
-  defaultOpen?: boolean
+  isOpen: boolean
   children: React.ReactNode
   step?: number
   isNext?: boolean
-  onOpen?: () => void
+  onToggle?: () => void
 }) {
-  const [open, setOpen] = useState(defaultOpen)
   const toggle = () => {
-    const next = !open
-    setOpen(next)
-    if (next && onOpen) onOpen()
+    if (onToggle) onToggle()
   }
 
   return (
@@ -145,7 +142,7 @@ export default function WordDetail() {
   const updateProgress = useUpdateLearningProgress()
 
   // Current active learning step
-  const [activeStep, setActiveStep] = useState<ModuleKey | null>(null)
+  const [activeStep, setActiveStep] = useState<ModuleKey>('phrases')
 
   // Derived state
   const bookmark = bookmarks?.find((b) => b.word === wordId)
@@ -452,10 +449,10 @@ function PhrasesSection({
     <CollapsibleSection
       icon={BookOpen}
       title="Phrases"
-      defaultOpen
+      isOpen={isOpen}
       step={1}
       isNext={isNext}
-      onOpen={onToggle}
+      onToggle={onToggle}
     >
       <div className="space-y-2">
         {displayed.map((p) => {
@@ -529,9 +526,10 @@ function ListeningSection({
     <CollapsibleSection
       icon={Headphones}
       title="Listening"
+      isOpen={isOpen}
       step={2}
       isNext={isNext}
-      onOpen={onToggle}
+      onToggle={onToggle}
     >
       <div className="space-y-4">
         {sentences.map((s) => (
@@ -673,9 +671,10 @@ function SpeakingSection({
     <CollapsibleSection
       icon={Mic}
       title="Speaking"
+      isOpen={isOpen}
       step={3}
       isNext={isNext}
-      onOpen={onToggle}
+      onToggle={onToggle}
     >
       {!chatActive ? (
         <div className="text-center py-6">
@@ -768,9 +767,10 @@ function ReadingSection({
     <CollapsibleSection
       icon={Globe}
       title="Reading"
+      isOpen={isOpen}
       step={4}
       isNext={isNext}
-      onOpen={onToggle}
+      onToggle={onToggle}
     >
       <div className="space-y-3">
         {sentences.map((s) => {
@@ -860,9 +860,10 @@ function WritingSection({
     <CollapsibleSection
       icon={Pencil}
       title="Writing"
+      isOpen={isOpen}
       step={5}
       isNext={isNext}
-      onOpen={onToggle}
+      onToggle={onToggle}
     >
       <div className="space-y-4">
         {exercises.map((ex) => (
