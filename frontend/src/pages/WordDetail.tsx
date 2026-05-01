@@ -91,23 +91,36 @@ function CollapsibleSection({
   )
 }
 
-// ─── Pronounce button (TTS) ───
+// ─── Pronounce button (TTS) — toggle play/stop ───
 function SpeakButton({ text, size = 'default' }: { text: string; size?: 'default' | 'sm' }) {
-  const speak = useCallback(() => {
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = 'en-US'
-    utterance.rate = 0.9
-    speechSynthesis.speak(utterance)
-  }, [text])
+  const [speaking, setSpeaking] = useState(false)
+
+  const toggle = useCallback(() => {
+    if (speaking) {
+      speechSynthesis.cancel()
+      setSpeaking(false)
+    } else {
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = 'en-US'
+      utterance.rate = 0.9
+      utterance.onend = () => setSpeaking(false)
+      utterance.onerror = () => setSpeaking(false)
+      speechSynthesis.speak(utterance)
+      setSpeaking(true)
+    }
+  }, [text, speaking])
 
   return (
     <button
-      onClick={speak}
+      onClick={toggle}
       className={cn(
-        'rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition-colors',
+        'rounded-lg transition-colors',
+        speaking
+          ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+          : 'bg-slate-700 hover:bg-slate-600 text-slate-300',
         size === 'sm' ? 'p-1.5' : 'p-2'
       )}
-      title="Listen to pronunciation"
+      title={speaking ? 'Stop' : 'Listen to pronunciation'}
     >
       <Volume2 className={size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'} />
     </button>
