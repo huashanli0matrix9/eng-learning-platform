@@ -336,9 +336,7 @@ export default function WordDetail() {
                     ? 'bg-blue-600/30 text-blue-300 border-blue-600/40'
                     : completed
                     ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30'
-                    : !activeStep
-                    ? 'bg-slate-800 text-slate-500 border-slate-700'
-                    : 'bg-slate-800/50 text-slate-500 border-slate-700/50 opacity-50'
+                    : 'bg-slate-700/60 text-slate-400 border-slate-600/50'
                 )}
               >
                 {completed ? (
