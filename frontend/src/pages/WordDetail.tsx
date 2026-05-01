@@ -487,6 +487,7 @@ function ListeningSection({
 }) {
   const [dictationInputs, setDictationInputs] = useState<Record<number, string>>({})
   const [dictationResults, setDictationResults] = useState<Record<number, boolean | null>>({})
+  const [translationVisible, setTranslationVisible] = useState<Set<number>>(new Set())
 
   const handleDictationSubmit = (sentenceId: number, original: string) => {
     const userAnswer = dictationInputs[sentenceId]?.trim().toLowerCase() ?? ''
@@ -512,16 +513,27 @@ function ListeningSection({
             key={s.id}
             className="rounded-xl bg-slate-700/40 border border-slate-600/30 p-4 space-y-3"
           >
-            {/* Sentence + play */}
+            {/* Sentence — click to toggle translation */}
             <div className="flex items-start justify-between gap-3">
-              <p className="text-slate-200 flex-1">{s.sentence}</p>
+              <button
+                onClick={() => {
+                  setTranslationVisible((prev) => {
+                    const next = new Set(prev)
+                    if (next.has(s.id)) next.delete(s.id)
+                    else next.add(s.id)
+                    return next
+                  })
+                }}
+                className="text-left flex-1"
+              >
+                <p className="text-slate-200">{s.sentence}</p>
+                {/* Translation — hidden by default, shown on click */}
+                {s.translation && translationVisible.has(s.id) && (
+                  <p className="text-sm text-slate-400 italic mt-1">{s.translation}</p>
+                )}
+              </button>
               <SpeakButton text={s.sentence} size="sm" />
             </div>
-
-            {/* Translation (always visible for listening) */}
-            {s.translation && (
-              <p className="text-sm text-slate-400 italic">{s.translation}</p>
-            )}
 
             {/* Dictation */}
             <div className="flex items-center gap-2">
