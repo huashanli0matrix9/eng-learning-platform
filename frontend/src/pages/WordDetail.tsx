@@ -83,13 +83,13 @@ function CollapsibleSection({
           <Icon className="w-5 h-5 text-slate-400" />
           <span className="text-lg font-semibold text-slate-200">{title}</span>
         </div>
-        {open ? (
+        {isOpen ? (
           <ChevronUp className="w-5 h-5 text-slate-500" />
         ) : (
           <ChevronDown className="w-5 h-5 text-slate-500" />
         )}
       </button>
-      {open && <div className="px-5 pb-5">{children}</div>}
+      {isOpen && <div className="px-5 pb-5">{children}</div>}
     </div>
   )
 }
