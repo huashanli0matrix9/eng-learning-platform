@@ -338,6 +338,8 @@ export default function WordDetail() {
                     ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30'
                     : next
                     ? 'bg-blue-600/20 text-blue-400 border-blue-600/30'
+                    : activeStep === step.key
+                    ? 'bg-blue-600/30 text-blue-300 border-blue-600/40'
                     : 'bg-slate-800 text-slate-500 border-slate-700'
                 )}
               >
@@ -356,18 +358,17 @@ export default function WordDetail() {
         })}
       </div>
 
-      {/* ── Phrases Module ── */}
+      {/* ── Modules (single expand at a time) ── */}
       {word.phrases.length > 0 && (
         <PhrasesSection
           phrases={word.phrases}
           isOpen={activeStep === 'phrases'}
           isNext={isStepNext('phrases')}
           onComplete={() => handleModuleComplete('phrases')}
-          onToggle={() => setActiveStep(activeStep === 'phrases' ? null : 'phrases')}
+          onToggle={() => setActiveStep(activeStep === 'phrases' ? 'listening' : 'phrases')}
         />
       )}
 
-      {/* ── Listening Module ── */}
       {word.listening_sentences.length > 0 && (
         <ListeningSection
           sentences={word.listening_sentences}
@@ -375,32 +376,29 @@ export default function WordDetail() {
           isOpen={activeStep === 'listening'}
           isNext={isStepNext('listening')}
           onComplete={(score) => handleModuleComplete('listening', { score })}
-          onToggle={() => setActiveStep(activeStep === 'listening' ? null : 'listening')}
+          onToggle={() => setActiveStep(activeStep === 'listening' ? 'phrases' : 'listening')}
         />
       )}
 
-      {/* ── Speaking Module ── */}
       <SpeakingSection
         wordText={word.word}
         wordId={wordId}
         isOpen={activeStep === 'speaking'}
         isNext={isStepNext('speaking')}
         onComplete={() => handleModuleComplete('speaking')}
-        onToggle={() => setActiveStep(activeStep === 'speaking' ? null : 'speaking')}
+        onToggle={() => setActiveStep(activeStep === 'speaking' ? 'listening' : 'speaking')}
       />
 
-      {/* ── Reading Module ── */}
       {word.reading_sentences.length > 0 && (
         <ReadingSection
           sentences={word.reading_sentences}
           isOpen={activeStep === 'reading'}
           isNext={isStepNext('reading')}
           onComplete={() => handleModuleComplete('reading')}
-          onToggle={() => setActiveStep(activeStep === 'reading' ? null : 'reading')}
+          onToggle={() => setActiveStep(activeStep === 'reading' ? 'speaking' : 'reading')}
         />
       )}
 
-      {/* ── Writing Module ── */}
       {word.writing_exercises.length > 0 && (
         <WritingSection
           exercises={word.writing_exercises}
@@ -408,7 +406,7 @@ export default function WordDetail() {
           isOpen={activeStep === 'writing'}
           isNext={isStepNext('writing')}
           onComplete={(score) => handleModuleComplete('writing', { score })}
-          onToggle={() => setActiveStep(activeStep === 'writing' ? null : 'writing')}
+          onToggle={() => setActiveStep(activeStep === 'writing' ? 'reading' : 'writing')}
         />
       )}
     </div>
