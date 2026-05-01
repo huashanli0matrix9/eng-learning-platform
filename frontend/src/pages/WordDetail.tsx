@@ -57,7 +57,6 @@ function CollapsibleSection({
   onToggle?: () => void
 }) {
   const toggle = () => {
-    console.log(`🔘 CollapsibleSection click: title="${title}", isOpen=${isOpen}, step=${step}`)
     if (onToggle) onToggle()
   }
 
@@ -148,7 +147,6 @@ export default function WordDetail() {
   // Derived state
   const bookmark = bookmarks?.find((b) => b.word === wordId)
   const isBookmarked = !!bookmark
-  console.log(`🏁 WordDetail render: activeStep="${activeStep}", isBookmarked=${isBookmarked}`)
 
   const progressMap = new Map(
     (learningProgress ?? []).map((p) => [p.module, p])
@@ -360,27 +358,23 @@ export default function WordDetail() {
         })}
       </div>
 
-      {/* ── Modules (single expand at a time) ── */}
-      {word.phrases.length > 0 && (
-        <PhrasesSection
-          phrases={word.phrases}
-          isOpen={activeStep === 'phrases'}
-          isNext={isStepNext('phrases')}
-          onComplete={() => handleModuleComplete('phrases')}
-          onToggle={() => setActiveStep(activeStep === 'phrases' ? '' : 'phrases')}
-        />
-      )}
+      {/* ── All modules always visible ── */}
+      <PhrasesSection
+        phrases={word.phrases}
+        isOpen={activeStep === 'phrases'}
+        isNext={isStepNext('phrases')}
+        onComplete={() => handleModuleComplete('phrases')}
+        onToggle={() => setActiveStep(activeStep === 'phrases' ? '' : 'phrases')}
+      />
 
-      {word.listening_sentences.length > 0 && (
-        <ListeningSection
-          sentences={word.listening_sentences}
-          wordText={word.word}
-          isOpen={activeStep === 'listening'}
-          isNext={isStepNext('listening')}
-          onComplete={(score) => handleModuleComplete('listening', { score })}
-          onToggle={() => setActiveStep(activeStep === 'listening' ? '' : 'listening')}
-        />
-      )}
+      <ListeningSection
+        sentences={word.listening_sentences}
+        wordText={word.word}
+        isOpen={activeStep === 'listening'}
+        isNext={isStepNext('listening')}
+        onComplete={(score) => handleModuleComplete('listening', { score })}
+        onToggle={() => setActiveStep(activeStep === 'listening' ? '' : 'listening')}
+      />
 
       <SpeakingSection
         wordText={word.word}
@@ -391,26 +385,22 @@ export default function WordDetail() {
         onToggle={() => setActiveStep(activeStep === 'speaking' ? '' : 'speaking')}
       />
 
-      {word.reading_sentences.length > 0 && (
-        <ReadingSection
-          sentences={word.reading_sentences}
-          isOpen={activeStep === 'reading'}
-          isNext={isStepNext('reading')}
-          onComplete={() => handleModuleComplete('reading')}
-          onToggle={() => setActiveStep(activeStep === 'reading' ? '' : 'reading')}
-        />
-      )}
+      <ReadingSection
+        sentences={word.reading_sentences}
+        isOpen={activeStep === 'reading'}
+        isNext={isStepNext('reading')}
+        onComplete={() => handleModuleComplete('reading')}
+        onToggle={() => setActiveStep(activeStep === 'reading' ? '' : 'reading')}
+      />
 
-      {word.writing_exercises.length > 0 && (
-        <WritingSection
-          exercises={word.writing_exercises}
-          wordId={wordId}
-          isOpen={activeStep === 'writing'}
-          isNext={isStepNext('writing')}
-          onComplete={(score) => handleModuleComplete('writing', { score })}
-          onToggle={() => setActiveStep(activeStep === 'writing' ? '' : 'writing')}
-        />
-      )}
+      <WritingSection
+        exercises={word.writing_exercises}
+        wordId={wordId}
+        isOpen={activeStep === 'writing'}
+        isNext={isStepNext('writing')}
+        onComplete={(score) => handleModuleComplete('writing', { score })}
+        onToggle={() => setActiveStep(activeStep === 'writing' ? '' : 'writing')}
+      />
     </div>
   )
 }
