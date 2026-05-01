@@ -145,12 +145,10 @@ export default function WordDetail() {
   // Current active learning step
   const [activeStep, setActiveStep] = useState<ModuleKey | ''>('phrases')
 
-  // eslint-disable-next-line no-console
-  console.log(`🏁 WordDetail render: activeStep="${activeStep}", isBookmarked=${isBookmarked}`)
-
   // Derived state
   const bookmark = bookmarks?.find((b) => b.word === wordId)
   const isBookmarked = !!bookmark
+  console.log(`🏁 WordDetail render: activeStep="${activeStep}", isBookmarked=${isBookmarked}`)
 
   const progressMap = new Map(
     (learningProgress ?? []).map((p) => [p.module, p])
