@@ -142,7 +142,7 @@ export default function WordDetail() {
   const updateProgress = useUpdateLearningProgress()
 
   // Current active learning step
-  const [activeStep, setActiveStep] = useState<ModuleKey | null>('phrases')
+  const [activeStep, setActiveStep] = useState<ModuleKey | ''>('phrases')
 
   // Derived state
   const bookmark = bookmarks?.find((b) => b.word === wordId)
@@ -365,7 +365,7 @@ export default function WordDetail() {
           isOpen={activeStep === 'phrases'}
           isNext={isStepNext('phrases')}
           onComplete={() => handleModuleComplete('phrases')}
-          onToggle={() => setActiveStep(activeStep === 'phrases' ? null : 'phrases')}
+          onToggle={() => setActiveStep(activeStep === 'phrases' ? '' : 'phrases')}
         />
       )}
 
@@ -376,7 +376,7 @@ export default function WordDetail() {
           isOpen={activeStep === 'listening'}
           isNext={isStepNext('listening')}
           onComplete={(score) => handleModuleComplete('listening', { score })}
-          onToggle={() => setActiveStep(activeStep === 'listening' ? null : 'listening')}
+          onToggle={() => setActiveStep(activeStep === 'listening' ? '' : 'listening')}
         />
       )}
 
@@ -386,7 +386,7 @@ export default function WordDetail() {
         isOpen={activeStep === 'speaking'}
         isNext={isStepNext('speaking')}
         onComplete={() => handleModuleComplete('speaking')}
-        onToggle={() => setActiveStep(activeStep === 'speaking' ? null : 'speaking')}
+        onToggle={() => setActiveStep(activeStep === 'speaking' ? '' : 'speaking')}
       />
 
       {word.reading_sentences.length > 0 && (
@@ -395,7 +395,7 @@ export default function WordDetail() {
           isOpen={activeStep === 'reading'}
           isNext={isStepNext('reading')}
           onComplete={() => handleModuleComplete('reading')}
-          onToggle={() => setActiveStep(activeStep === 'reading' ? null : 'reading')}
+          onToggle={() => setActiveStep(activeStep === 'reading' ? '' : 'reading')}
         />
       )}
 
@@ -406,7 +406,7 @@ export default function WordDetail() {
           isOpen={activeStep === 'writing'}
           isNext={isStepNext('writing')}
           onComplete={(score) => handleModuleComplete('writing', { score })}
-          onToggle={() => setActiveStep(activeStep === 'writing' ? null : 'writing')}
+          onToggle={() => setActiveStep(activeStep === 'writing' ? '' : 'writing')}
         />
       )}
     </div>
