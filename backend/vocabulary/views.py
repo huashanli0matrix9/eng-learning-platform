@@ -7,6 +7,7 @@ from django.db.models import Count, Q
 import random
 
 from .models import Category, Word, WordList, UserProgress
+from .filters import WordFilter
 from .serializers import (
     CategorySerializer, WordSerializer, WordListSerializer,
     WordListDetailSerializer, UserProgressSerializer,
@@ -22,8 +23,8 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class WordViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Word.objects.select_related('category').all()
     serializer_class = WordSerializer
+    filterset_class = WordFilter
     search_fields = ['word', 'definition', 'synonym', 'example_sentence']
-    filterset_fields = ['category', 'difficulty']
 
     @action(detail=False, methods=['get'])
     def random(self, request):
