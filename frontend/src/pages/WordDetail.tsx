@@ -42,28 +42,26 @@ const difficultyStyles: Record<string, string> = {
 function CollapsibleSection({
   icon: Icon,
   title,
-  isOpen,
+  visible,
   children,
   step,
   isNext,
-  onToggle,
 }: {
   icon: React.ElementType
   title: string
-  isOpen: boolean
+  visible: boolean
   children: React.ReactNode
   step?: number
   isNext?: boolean
-  onToggle?: () => void
 }) {
-  const toggle = () => {
-    if (onToggle) onToggle()
-  }
+  const [expanded, setExpanded] = useState(true)
+
+  if (!visible) return null
 
   return (
     <div className="rounded-2xl border border-slate-700 bg-slate-800/50 overflow-hidden transition-all">
       <button
-        onClick={toggle}
+        onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between p-5 hover:bg-slate-700/30 transition-colors"
       >
         <div className="flex items-center gap-3">
@@ -82,13 +80,13 @@ function CollapsibleSection({
           <Icon className="w-5 h-5 text-slate-400" />
           <span className="text-lg font-semibold text-slate-200">{title}</span>
         </div>
-        {isOpen ? (
+        {expanded ? (
           <ChevronUp className="w-5 h-5 text-slate-500" />
         ) : (
           <ChevronDown className="w-5 h-5 text-slate-500" />
         )}
       </button>
-      {isOpen && <div className="px-5 pb-5">{children}</div>}
+      {expanded && <div className="px-5 pb-5">{children}</div>}
     </div>
   )
 }
@@ -361,45 +359,40 @@ export default function WordDetail() {
       {/* ── All modules always visible ── */}
       <PhrasesSection
         phrases={word.phrases}
-        isOpen={activeStep === 'phrases'}
+        visible={activeStep === 'phrases'}
         isNext={isStepNext('phrases')}
         onComplete={() => handleModuleComplete('phrases')}
-        onToggle={() => setActiveStep(activeStep === 'phrases' ? '' : 'phrases')}
       />
 
       <ListeningSection
         sentences={word.listening_sentences}
         wordText={word.word}
-        isOpen={activeStep === 'listening'}
+        visible={activeStep === 'listening'}
         isNext={isStepNext('listening')}
         onComplete={(score) => handleModuleComplete('listening', { score })}
-        onToggle={() => setActiveStep(activeStep === 'listening' ? '' : 'listening')}
       />
 
       <SpeakingSection
         wordText={word.word}
         wordId={wordId}
-        isOpen={activeStep === 'speaking'}
+        visible={activeStep === 'speaking'}
         isNext={isStepNext('speaking')}
         onComplete={() => handleModuleComplete('speaking')}
-        onToggle={() => setActiveStep(activeStep === 'speaking' ? '' : 'speaking')}
       />
 
       <ReadingSection
         sentences={word.reading_sentences}
-        isOpen={activeStep === 'reading'}
+        visible={activeStep === 'reading'}
         isNext={isStepNext('reading')}
         onComplete={() => handleModuleComplete('reading')}
-        onToggle={() => setActiveStep(activeStep === 'reading' ? '' : 'reading')}
       />
 
       <WritingSection
         exercises={word.writing_exercises}
         wordId={wordId}
-        isOpen={activeStep === 'writing'}
+        visible={activeStep === 'writing'}
         isNext={isStepNext('writing')}
         onComplete={(score) => handleModuleComplete('writing', { score })}
-        onToggle={() => setActiveStep(activeStep === 'writing' ? '' : 'writing')}
       />
     </div>
   )
@@ -410,16 +403,14 @@ export default function WordDetail() {
 // ──────────────────────────────────────────────
 function PhrasesSection({
   phrases,
-  isOpen,
+  visible,
   isNext,
   onComplete,
-  onToggle,
 }: {
   phrases: { id: number; phrase: string; translation: string }[]
-  isOpen: boolean
+  visible: boolean
   isNext: boolean
   onComplete: () => void
-  onToggle: () => void
 }) {
   const [showAll, setShowAll] = useState(false)
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set())
@@ -439,10 +430,9 @@ function PhrasesSection({
     <CollapsibleSection
       icon={BookOpen}
       title="Phrases"
-      isOpen={isOpen}
+      visible={visible}
       step={1}
       isNext={isNext}
-      onToggle={onToggle}
     >
       <div className="space-y-2">
         {displayed.map((p) => {
@@ -487,17 +477,15 @@ function PhrasesSection({
 function ListeningSection({
   sentences,
   wordText,
-  isOpen,
+  visible,
   isNext,
   onComplete,
-  onToggle,
 }: {
   sentences: { id: number; sentence: string; translation: string }[]
   wordText: string
-  isOpen: boolean
+  visible: boolean
   isNext: boolean
   onComplete: (score: number) => void
-  onToggle: () => void
 }) {
   const [dictationInputs, setDictationInputs] = useState<Record<number, string>>({})
   const [dictationResults, setDictationResults] = useState<Record<number, boolean | null>>({})
@@ -516,10 +504,9 @@ function ListeningSection({
     <CollapsibleSection
       icon={Headphones}
       title="Listening"
-      isOpen={isOpen}
+      visible={visible}
       step={2}
       isNext={isNext}
-      onToggle={onToggle}
     >
       <div className="space-y-4">
         {sentences.map((s) => (
@@ -604,17 +591,15 @@ function ListeningSection({
 function SpeakingSection({
   wordText,
   wordId,
-  isOpen,
+  visible,
   isNext,
   onComplete,
-  onToggle,
 }: {
   wordText: string
   wordId: number
-  isOpen: boolean
+  visible: boolean
   isNext: boolean
   onComplete: () => void
-  onToggle: () => void
 }) {
   const [chatActive, setChatActive] = useState(false)
   const [messages, setMessages] = useState<
@@ -661,10 +646,9 @@ function SpeakingSection({
     <CollapsibleSection
       icon={Mic}
       title="Speaking"
-      isOpen={isOpen}
+      visible={visible}
       step={3}
       isNext={isNext}
-      onToggle={onToggle}
     >
       {!chatActive ? (
         <div className="text-center py-6">
@@ -731,16 +715,14 @@ function SpeakingSection({
 // ──────────────────────────────────────────────
 function ReadingSection({
   sentences,
-  isOpen,
+  visible,
   isNext,
   onComplete,
-  onToggle,
 }: {
   sentences: { id: number; sentence: string; translation: string }[]
-  isOpen: boolean
+  visible: boolean
   isNext: boolean
   onComplete: () => void
-  onToggle: () => void
 }) {
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set())
 
@@ -757,10 +739,9 @@ function ReadingSection({
     <CollapsibleSection
       icon={Globe}
       title="Reading"
-      isOpen={isOpen}
+      visible={visible}
       step={4}
       isNext={isNext}
-      onToggle={onToggle}
     >
       <div className="space-y-3">
         {sentences.map((s) => {
@@ -796,17 +777,15 @@ function ReadingSection({
 function WritingSection({
   exercises,
   wordId,
-  isOpen,
+  visible,
   isNext,
   onComplete,
-  onToggle,
 }: {
   exercises: { id: number; chinese_sentence: string; reference_answer: string }[]
   wordId: number
-  isOpen: boolean
+  visible: boolean
   isNext: boolean
   onComplete: (score: number) => void
-  onToggle: () => void
 }) {
   const [answers, setAnswers] = useState<Record<number, string>>({})
   const [results, setResults] = useState<
@@ -850,10 +829,9 @@ function WritingSection({
     <CollapsibleSection
       icon={Pencil}
       title="Writing"
-      isOpen={isOpen}
+      visible={visible}
       step={5}
       isNext={isNext}
-      onToggle={onToggle}
     >
       <div className="space-y-4">
         {exercises.map((ex) => (
