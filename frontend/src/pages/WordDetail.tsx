@@ -57,6 +57,7 @@ function CollapsibleSection({
   onToggle?: () => void
 }) {
   const toggle = () => {
+    console.log(`🔘 CollapsibleSection click: title="${title}", isOpen=${isOpen}, step=${step}`)
     if (onToggle) onToggle()
   }
 
@@ -143,6 +144,9 @@ export default function WordDetail() {
 
   // Current active learning step
   const [activeStep, setActiveStep] = useState<ModuleKey | ''>('phrases')
+
+  // eslint-disable-next-line no-console
+  console.log(`🏁 WordDetail render: activeStep="${activeStep}", isBookmarked=${isBookmarked}`)
 
   // Derived state
   const bookmark = bookmarks?.find((b) => b.word === wordId)
