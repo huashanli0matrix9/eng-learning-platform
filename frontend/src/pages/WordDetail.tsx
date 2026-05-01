@@ -56,10 +56,13 @@ function CollapsibleSection({
 }) {
   const [expanded, setExpanded] = useState(true)
 
-  if (!visible) return null
-
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-800/50 overflow-hidden transition-all">
+    <div className={cn(
+      'rounded-2xl border overflow-hidden transition-all',
+      visible
+        ? 'border-slate-700 bg-slate-800/50'
+        : 'border-slate-800/50 bg-slate-900/20 opacity-40'
+    )}>
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between p-5 hover:bg-slate-700/30 transition-colors"
