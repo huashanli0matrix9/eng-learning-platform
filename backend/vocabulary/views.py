@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -6,11 +6,18 @@ from django.utils import timezone
 from django.db.models import Count, Q
 import random
 
-from .models import Category, Word, WordList, UserProgress
+from .models import (
+    Category, Word, WordList, UserProgress,
+    Phrase, ListeningSentence, ReadingSentence,
+    WritingExercise, Bookmark, WordLearningProgress,
+)
 from .filters import WordFilter
 from .serializers import (
     CategorySerializer, WordSerializer, WordListSerializer,
     WordListDetailSerializer, UserProgressSerializer,
+    PhraseSerializer, ListeningSentenceSerializer,
+    ReadingSentenceSerializer, WritingExerciseSerializer,
+    BookmarkSerializer, WordLearningProgressSerializer,
 )
 
 
@@ -21,7 +28,9 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class WordViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Word.objects.select_related('category').all()
+    queryset = Word.objects.select_related('category').prefetch_related(
+        'phrases', 'listening_sentences', 'reading_sentences', 'writing_exercises'
+    ).all()
     serializer_class = WordSerializer
     filterset_class = WordFilter
     search_fields = ['word', 'definition', 'synonym', 'example_sentence']
@@ -165,3 +174,97 @@ class UserProgressViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(progress_qs, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['post'])
+    def mark_reviewed(self, request):
+        """Simple mark as reviewed (sets mastery_level to 1 if new)."""
+        word_id = request.data.get('word_id')
+        if not word_id:
+            return Response(
+                {'error': 'word_id is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        progress, created = UserProgress.objects.get_or_create(
+            user=request.user,
+            word_id=word_id,
+            defaults={'mastery_level': 1, 'times_reviewed': 1}
+        )
+        if created:
+            progress.last_reviewed = timezone.now()
+            from datetime import timedelta
+            progress.next_review = timezone.now() + timedelta(days=1)
+            progress.save()
+        return Response({'status': 'ok'})
+
+
+# --- New modules ---
+
+class BookmarkViewSet(viewsets.ModelViewSet):
+    serializer_class = BookmarkSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Bookmark.objects.filter(user=self.request.user).select_related('word__category')
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    @action(detail=True, methods=['delete'])
+    def remove(self, request, pk=None):
+        bookmark = self.get_object()
+        bookmark.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WordLearningProgressViewSet(viewsets.ModelViewSet):
+    serializer_class = WordLearningProgressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return WordLearningProgress.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+# --- AI API placeholders ---
+
+class SpeakingAIView(generics.GenericAPIView):
+    """Placeholder for Gemini-powered speaking dialogue."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        word_id = request.data.get('word_id')
+        message = request.data.get('message', '')
+
+        if not word_id:
+            return Response({'error': 'word_id is required'}, status=400)
+
+        # TODO: Integrate Gemini API — configure via settings.GEMINI_API_KEY
+        # settings = __import__('django.conf').conf.settings
+        # Call Gemini with the word context and conversation history
+        return Response({
+            'reply': '[AI speaking response placeholder]',
+            'suggestions': [],
+        })
+
+
+class WritingAICorrectionView(generics.GenericAPIView):
+    """Placeholder for OpenAI-powered writing correction."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        word_id = request.data.get('word_id')
+        exercise_id = request.data.get('exercise_id')
+        user_answer = request.data.get('answer', '')
+
+        if not word_id or not exercise_id:
+            return Response({'error': 'word_id and exercise_id are required'}, status=400)
+
+        # TODO: Integrate OpenAI API — configure via settings.OPENAI_API_KEY
+        # Call OpenAI with the word, exercise, and user's answer
+        return Response({
+            'reference_answer': '[reference answer placeholder]',
+            'feedback': '[AI correction feedback placeholder]',
+            'score': None,
+        })

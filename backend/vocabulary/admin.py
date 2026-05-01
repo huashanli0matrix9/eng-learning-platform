@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Category, Word, WordList, UserProgress
+from .models import (
+    Category, Word, WordList, UserProgress,
+    Phrase, ListeningSentence, ReadingSentence,
+    WritingExercise, Bookmark, WordLearningProgress,
+)
 
 
 @admin.register(Category)
@@ -39,4 +43,56 @@ class WordListAdmin(admin.ModelAdmin):
 class UserProgressAdmin(admin.ModelAdmin):
     list_display = ['user', 'word', 'mastery_level', 'times_reviewed', 'next_review']
     list_filter = ['mastery_level']
+    search_fields = ['user__username', 'word__word']
+
+
+# ── New models ──
+
+@admin.register(Phrase)
+class PhraseAdmin(admin.ModelAdmin):
+    list_display = ['phrase', 'word', 'order']
+    list_filter = ['word']
+    search_fields = ['phrase', 'word__word']
+
+
+@admin.register(ListeningSentence)
+class ListeningSentenceAdmin(admin.ModelAdmin):
+    list_display = ['snippet', 'word', 'order']
+    list_filter = ['word']
+    search_fields = ['sentence', 'word__word']
+
+    def snippet(self, obj):
+        return obj.sentence[:60] + ('...' if len(obj.sentence) > 60 else '')
+    snippet.short_description = 'Sentence'
+
+
+@admin.register(ReadingSentence)
+class ReadingSentenceAdmin(admin.ModelAdmin):
+    list_display = ['snippet', 'word', 'order']
+    list_filter = ['word']
+    search_fields = ['sentence', 'word__word']
+
+    def snippet(self, obj):
+        return obj.sentence[:60] + ('...' if len(obj.sentence) > 60 else '')
+    snippet.short_description = 'Sentence'
+
+
+@admin.register(WritingExercise)
+class WritingExerciseAdmin(admin.ModelAdmin):
+    list_display = ['chinese_sentence', 'word', 'order']
+    list_filter = ['word']
+    search_fields = ['chinese_sentence', 'word__word']
+
+
+@admin.register(Bookmark)
+class BookmarkAdmin(admin.ModelAdmin):
+    list_display = ['user', 'word', 'created_at']
+    list_filter = ['user']
+    search_fields = ['user__username', 'word__word']
+
+
+@admin.register(WordLearningProgress)
+class WordLearningProgressAdmin(admin.ModelAdmin):
+    list_display = ['user', 'word', 'module', 'completed', 'score', 'updated_at']
+    list_filter = ['module', 'completed', 'user']
     search_fields = ['user__username', 'word__word']

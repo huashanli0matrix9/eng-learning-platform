@@ -88,6 +88,10 @@ CORS_ALLOWED_ORIGINS = config(
     default='http://localhost:5173'
 ).split(',')
 
+# AI API Keys (configure via environment variables)
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
+
 # SimpleJWT — access token expires in 1 hour
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
