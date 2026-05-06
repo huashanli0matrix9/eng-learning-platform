@@ -7,6 +7,34 @@ export interface Category {
   word_count: number
 }
 
+export interface Phrase {
+  id: number
+  phrase: string
+  translation: string
+  order: number
+}
+
+export interface ListeningSentence {
+  id: number
+  sentence: string
+  translation: string
+  order: number
+}
+
+export interface ReadingSentence {
+  id: number
+  sentence: string
+  translation: string
+  order: number
+}
+
+export interface WritingExercise {
+  id: number
+  chinese_sentence: string
+  reference_answer: string
+  order: number
+}
+
 export interface Word {
   id: number
   word: string
@@ -19,6 +47,10 @@ export interface Word {
   category_name: string
   difficulty: 'beginner' | 'intermediate' | 'advanced'
   created_at: string
+  phrases: Phrase[]
+  listening_sentences: ListeningSentence[]
+  reading_sentences: ReadingSentence[]
+  writing_exercises: WritingExercise[]
 }
 
 export interface PaginatedResponse<T> {
@@ -54,4 +86,21 @@ export interface CategoryProgress {
   total: number
   studied: number
   percentage: number
+}
+
+export interface Bookmark {
+  id: number
+  word: number
+  word_detail: Word
+  created_at: string
+}
+
+export interface WordLearningProgress {
+  id: number
+  word: number
+  module: 'phrases' | 'listening' | 'speaking' | 'reading' | 'writing'
+  completed: boolean
+  score: number | null
+  details: Record<string, unknown>
+  updated_at: string
 }

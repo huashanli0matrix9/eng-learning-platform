@@ -41,10 +41,10 @@ export default function Review() {
   const handleAnswer = (correct: boolean) => {
     if (!currentWord) return;
 
-    recordReview.mutate({ wordId: currentWord.id, correct });
+    recordReview.mutate({ wordId: currentWord.word, correct });
     setResults((prev) => [
       ...prev,
-      { wordId: currentWord.id, correct, word: currentWord.word },
+      { wordId: currentWord.word, correct, word: currentWord.word_detail?.word ?? '' },
     ]);
 
     // Auto advance after a brief delay
@@ -191,7 +191,7 @@ export default function Review() {
 
       {/* Flashcard */}
       <Flashcard
-        word={currentWord}
+        word={currentWord?.word_detail ?? currentWord as any}
         onNext={handleNext}
         onPrev={handlePrev}
         hasNext={currentIndex < words.length - 1 || results.length > currentIndex}

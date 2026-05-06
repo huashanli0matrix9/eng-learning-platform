@@ -60,6 +60,101 @@ class WordList(models.Model):
         return self.name
 
 
+class Phrase(models.Model):
+    """Common phrases/collocations for a word."""
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='phrases')
+    phrase = models.CharField(max_length=300)
+    translation = models.TextField(blank=True, help_text="Chinese translation")
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.phrase} ({self.word.word})"
+
+
+class ListeningSentence(models.Model):
+    """Listening practice sentences with audio."""
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='listening_sentences')
+    sentence = models.TextField()
+    translation = models.TextField(blank=True, help_text="Chinese translation")
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.sentence[:50]}... ({self.word.word})"
+
+
+class ReadingSentence(models.Model):
+    """Complex sentences for reading comprehension."""
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='reading_sentences')
+    sentence = models.TextField()
+    translation = models.TextField(blank=True, help_text="Chinese translation")
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.sentence[:50]}... ({self.word.word})"
+
+
+class WritingExercise(models.Model):
+    """Writing practice: translate Chinese to English using the target word."""
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='writing_exercises')
+    chinese_sentence = models.TextField(help_text="Chinese sentence to translate")
+    reference_answer = models.TextField(blank=True, help_text="Reference English answer")
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"Writing: {self.chinese_sentence[:40]}... ({self.word.word})"
+
+
+class Bookmark(models.Model):
+    """User's bookmarked/favorite words."""
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='word_bookmarks')
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='bookmarks')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'word']
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} ❤️ {self.word.word}"
+
+
+class WordLearningProgress(models.Model):
+    """Per-module learning progress for a word."""
+    class ModuleChoices(models.TextChoices):
+        PHRASES = 'phrases', 'Phrases'
+        LISTENING = 'listening', 'Listening'
+        SPEAKING = 'speaking', 'Speaking'
+        READING = 'reading', 'Reading'
+        WRITING = 'writing', 'Writing'
+
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='word_learning_progress')
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='learning_progress')
+    module = models.CharField(max_length=20, choices=ModuleChoices.choices)
+    completed = models.BooleanField(default=False)
+    score = models.FloatField(null=True, blank=True, help_text="Score for this module (e.g. dictation accuracy, writing score)")
+    details = models.JSONField(default=dict, blank=True, help_text="Extra module-specific data")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ['user', 'word', 'module']
+        verbose_name_plural = 'word learning progress'
+
+    def __str__(self):
+        return f"{self.user.username} - {self.word.word} ({self.module}: {'✅' if self.completed else '⬜'})"
+
+
 class UserProgress(models.Model):
     """Tracks a user's mastery of individual words."""
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='vocabulary_progress')
