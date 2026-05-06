@@ -1,0 +1,42 @@
+tools:
+  - name: git_command
+    description: Run safe Git commands
+    type: shell
+    command: |
+      git {{command}}
+    parameters:
+      command:
+        type: string
+
+  - name: postgres_query
+    description: Execute SQL against PostgreSQL
+    type: shell
+    command: |
+      psql "$DATABASE_URL" -c "{{sql}}"
+    parameters:
+      sql:
+        type: string
+
+  - name: backend_test
+    description: Run Django backend tests
+    type: shell
+    command: |
+      cd backend && pytest
+
+  - name: frontend_test
+    description: Run React frontend tests
+    type: shell
+    command: |
+      cd frontend && npm run test
+
+  - name: frontend_build
+    description: Run frontend production build
+    type: shell
+    command: |
+      cd frontend && npm run build
+
+  - name: backend_check
+    description: Run Django system check
+    type: shell
+    command: |
+      cd backend && python manage.py check
