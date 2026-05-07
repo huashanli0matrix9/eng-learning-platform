@@ -26,7 +26,7 @@ class Command(BaseCommand):
             deleted, _ = PhrasalVerb.objects.all().delete()
             self.stdout.write(f'Deleted {deleted} existing phrasal verbs')
 
-        with open(csv_path, 'r', encoding='utf-8') as f:
+        with open(csv_path, 'r', encoding='utf-8-sig') as f:
             reader = csv.DictReader(f)
             required_fields = {'phrase', 'meaning_zh', 'target_sentence'}
             if not required_fields.issubset(reader.fieldnames or []):
