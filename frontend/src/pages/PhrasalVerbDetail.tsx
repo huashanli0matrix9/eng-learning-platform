@@ -35,12 +35,12 @@ export default function PhrasalVerbDetail() {
           <p className="text-xl text-gray-600">{phrase.meaning_zh}</p>
         </div>
 
-        {/* Scene */}
-        {phrase.scene && (
+        {/* Category */}
+        {phrase.category_name && (
           <div className="mb-6">
-            <span className="text-sm text-gray-500 font-medium">场景 / Scene:</span>
+            <span className="text-sm text-gray-500 font-medium">分类 / Category:</span>
             <span className="ml-2 inline-block px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-              {phrase.scene}
+              {phrase.category_name}
             </span>
           </div>
         )}

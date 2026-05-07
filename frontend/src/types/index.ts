@@ -105,11 +105,22 @@ export interface WordLearningProgress {
   updated_at: string
 }
 
+export interface PhrasalVerbCategory {
+  id: number
+  name: string
+  slug: string
+  description: string
+  order: number
+  phrase_count: number
+}
+
 export interface PhrasalVerb {
   id: number
   phrase: string
   meaning_zh: string
-  scene: string
+  category: number | null
+  category_name: string | null
+  category_slug: string | null
   context_en: string
   target_sentence: string
   context_zh: string

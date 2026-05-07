@@ -121,7 +121,10 @@ class PhrasalVerb(models.Model):
     Covers work, daily life, and mixed-scenario phrasal verbs."""
     phrase = models.CharField(max_length=200, db_index=True)
     meaning_zh = models.CharField(max_length=200, help_text="Chinese meaning")
-    scene = models.CharField(max_length=200, blank=True, help_text="Usage scenario (e.g. client communication, daily life)")
+    category = models.ForeignKey(
+        PhrasalVerbCategory, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='phrasal_verbs'
+    )
     context_en = models.TextField(blank=True, help_text="Full English context paragraph")
     target_sentence = models.TextField(help_text="Key sentence demonstrating the phrase")
     context_zh = models.TextField(blank=True, help_text="Chinese translation of context")
@@ -135,6 +138,21 @@ class PhrasalVerb(models.Model):
 
     def __str__(self):
         return self.phrase
+
+
+class PhrasalVerbCategory(models.Model):
+    """Categories for phrasal verbs (e.g. Work, Daily Life, Travel)."""
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = 'phrasal verb categories'
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
 
 
 class Bookmark(models.Model):

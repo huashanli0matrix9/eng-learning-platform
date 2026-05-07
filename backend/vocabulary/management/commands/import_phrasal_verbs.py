@@ -1,7 +1,7 @@
 import csv
 import os
 from django.core.management.base import BaseCommand, CommandError
-from vocabulary.models import PhrasalVerb
+from vocabulary.models import PhrasalVerb, PhrasalVerbCategory
 
 
 class Command(BaseCommand):
@@ -12,7 +12,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--replace',
             action='store_true',
-            help='Replace all existing work phrases before importing',
+            help='Replace all existing phrasal verbs before importing',
         )
 
     def handle(self, *args, **options):
@@ -44,11 +44,21 @@ class Command(BaseCommand):
                     errors += 1
                     continue
 
+                # Resolve category by scene name
+                category = None
+                scene = row.get('scene', '').strip()
+                if scene:
+                    cat_slug = scene.lower().replace(' ', '-').replace('/', '-')
+                    category, _ = PhrasalVerbCategory.objects.get_or_create(
+                        slug=cat_slug,
+                        defaults={'name': scene, 'description': ''},
+                    )
+
                 try:
                     PhrasalVerb.objects.create(
                         phrase=phrase_text,
                         meaning_zh=row.get('meaning_zh', '').strip(),
-                        scene=row.get('scene', '').strip(),
+                        category=category,
                         context_en=row.get('context_en', '').strip(),
                         target_sentence=row.get('target_sentence', '').strip(),
                         context_zh=row.get('context_zh', '').strip(),

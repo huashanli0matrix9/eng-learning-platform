@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Category, Word, WordList, UserProgress,
     Phrase, ListeningSentence, ReadingSentence,
-    WritingExercise, Bookmark, WordLearningProgress, PhrasalVerb,
+    WritingExercise, Bookmark, WordLearningProgress, PhrasalVerb, PhrasalVerbCategory,
 )
 
 
@@ -98,9 +98,24 @@ class WordLearningProgressAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'word__word']
 
 
+@admin.register(PhrasalVerbCategory)
+class PhrasalVerbCategoryAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name',)}
+    list_display = ['name', 'order', 'phrase_count']
+    search_fields = ['name']
+
+    def get_queryset(self, request):
+        from django.db.models import Count
+        return super().get_queryset(request).annotate(phrase_count=Count('phrasal_verbs'))
+
+    def phrase_count(self, obj):
+        return obj.phrase_count
+    phrase_count.admin_order_field = 'phrase_count'
+
+
 @admin.register(PhrasalVerb)
 class PhrasalVerbAdmin(admin.ModelAdmin):
-    list_display = ['phrase', 'meaning_zh', 'scene', 'created_at']
-    list_filter = ['scene']
+    list_display = ['phrase', 'meaning_zh', 'category', 'created_at']
+    list_filter = ['category']
     search_fields = ['phrase', 'meaning_zh', 'target_sentence']
     list_per_page = 50

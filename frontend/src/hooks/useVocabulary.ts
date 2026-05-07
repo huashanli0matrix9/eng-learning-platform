@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
-import type { Category, Word, PaginatedResponse, UserProgress, VocabularyStats, Bookmark, WordLearningProgress, PhrasalVerb } from '../types'
+import type { Category, Word, PaginatedResponse, UserProgress, VocabularyStats, Bookmark, WordLearningProgress, PhrasalVerb, PhrasalVerbCategory } from '../types'
 
 // Categories
 export function useCategories() {
@@ -220,8 +220,19 @@ export function useAIWritingCorrection() {
   })
 }
 
+// Phrasal Verb Categories
+export function usePhrasalVerbCategories() {
+  return useQuery<PhrasalVerbCategory[]>({
+    queryKey: ['phrasalVerbCategories'],
+    queryFn: async () => {
+      const { data } = await api.get('/phrasal-verb-categories/')
+      return data.results ?? data
+    },
+  })
+}
+
 // Phrasal Verbs
-export function usePhrasalVerbs(params?: { search?: string; scene?: string; page?: number }) {
+export function usePhrasalVerbs(params?: { search?: string; category?: number; page?: number }) {
   return useQuery<PaginatedResponse<PhrasalVerb>>({
     queryKey: ['phrasalVerbs', params],
     queryFn: async () => {
