@@ -116,6 +116,21 @@ class WritingExercise(models.Model):
         return f"Writing: {self.chinese_sentence[:40]}... ({self.word.word})"
 
 
+class PhrasalVerbCategory(models.Model):
+    """Categories for phrasal verbs (e.g. Work, Daily Life, Travel)."""
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = 'phrasal verb categories'
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
+
+
 class PhrasalVerb(models.Model):
     """Phrasal verbs with context and usage notes. Independent of Word model.
     Covers work, daily life, and mixed-scenario phrasal verbs."""
@@ -138,21 +153,6 @@ class PhrasalVerb(models.Model):
 
     def __str__(self):
         return self.phrase
-
-
-class PhrasalVerbCategory(models.Model):
-    """Categories for phrasal verbs (e.g. Work, Daily Life, Travel)."""
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
-    order = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        verbose_name_plural = 'phrasal verb categories'
-        ordering = ['order', 'name']
-
-    def __str__(self):
-        return self.name
 
 
 class Bookmark(models.Model):
