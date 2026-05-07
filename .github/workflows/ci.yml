@@ -8,8 +8,11 @@ on:
 
 env:
   DJANGO_SECRET_KEY: ci-temp-secret-key-do-not-use-in-prod
-  DJANGO_DB_ENGINE: django.db.backends.sqlite3
-  DJANGO_DB_NAME: db.sqlite3
+  DJANGO_DB_HOST: localhost
+  DJANGO_DB_PORT: '5432'
+  DJANGO_DB_NAME: engdb
+  DJANGO_DB_USER: postgres
+  DJANGO_DB_PASSWORD: postgres
 
 jobs:
   backend:

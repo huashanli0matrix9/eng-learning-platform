@@ -58,15 +58,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Database - local PostgreSQL
+# Database - local PostgreSQL (override via env vars for CI)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'engdb',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5433',
+        'ENGINE': os.getenv('DJANGO_DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.getenv('DJANGO_DB_NAME', 'engdb'),
+        'USER': os.getenv('DJANGO_DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DJANGO_DB_PASSWORD', 'postgres'),
+        'HOST': os.getenv('DJANGO_DB_HOST', 'localhost'),
+        'PORT': os.getenv('DJANGO_DB_PORT', '5433'),
     }
 }
 
