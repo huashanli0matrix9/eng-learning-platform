@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Category, Word, WordList, UserProgress,
     Phrase, ListeningSentence, ReadingSentence,
-    WritingExercise, Bookmark, WordLearningProgress,
+    WritingExercise, Bookmark, WordLearningProgress, WorkPhrase,
 )
 
 
@@ -96,3 +96,11 @@ class WordLearningProgressAdmin(admin.ModelAdmin):
     list_display = ['user', 'word', 'module', 'completed', 'score', 'updated_at']
     list_filter = ['module', 'completed', 'user']
     search_fields = ['user__username', 'word__word']
+
+
+@admin.register(WorkPhrase)
+class WorkPhraseAdmin(admin.ModelAdmin):
+    list_display = ['phrase', 'meaning_zh', 'scene', 'created_at']
+    list_filter = ['scene']
+    search_fields = ['phrase', 'meaning_zh', 'target_sentence']
+    list_per_page = 50

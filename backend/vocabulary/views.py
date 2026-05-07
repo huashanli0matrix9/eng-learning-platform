@@ -9,7 +9,7 @@ import random
 from .models import (
     Category, Word, WordList, UserProgress,
     Phrase, ListeningSentence, ReadingSentence,
-    WritingExercise, Bookmark, WordLearningProgress,
+    WritingExercise, Bookmark, WordLearningProgress, WorkPhrase,
 )
 from .filters import WordFilter
 from .serializers import (
@@ -18,6 +18,7 @@ from .serializers import (
     PhraseSerializer, ListeningSentenceSerializer,
     ReadingSentenceSerializer, WritingExerciseSerializer,
     BookmarkSerializer, WordLearningProgressSerializer,
+    WorkPhraseSerializer,
 )
 
 
@@ -225,6 +226,13 @@ class WordLearningProgressViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class WorkPhraseViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = WorkPhrase.objects.all()
+    serializer_class = WorkPhraseSerializer
+    search_fields = ['phrase', 'meaning_zh', 'scene', 'target_sentence']
+    filterset_fields = ['scene']
 
 
 # --- AI API placeholders ---

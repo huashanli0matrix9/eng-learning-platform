@@ -9,6 +9,7 @@ router.register(r'word-lists', views.WordListViewSet)
 router.register(r'progress', views.UserProgressViewSet, basename='progress')
 router.register(r'bookmarks', views.BookmarkViewSet, basename='bookmark')
 router.register(r'learning-progress', views.WordLearningProgressViewSet, basename='learning-progress')
+router.register(r'work-phrases', views.WorkPhraseViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

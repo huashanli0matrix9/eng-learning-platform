@@ -104,3 +104,15 @@ export interface WordLearningProgress {
   details: Record<string, unknown>
   updated_at: string
 }
+
+export interface WorkPhrase {
+  id: number
+  phrase: string
+  meaning_zh: string
+  scene: string
+  context_en: string
+  target_sentence: string
+  context_zh: string
+  usage_note: string
+  created_at: string
+}

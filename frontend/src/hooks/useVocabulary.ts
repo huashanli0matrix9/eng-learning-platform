@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
-import type { Category, Word, PaginatedResponse, UserProgress, VocabularyStats, Bookmark, WordLearningProgress } from '../types'
+import type { Category, Word, PaginatedResponse, UserProgress, VocabularyStats, Bookmark, WordLearningProgress, WorkPhrase } from '../types'
 
 // Categories
 export function useCategories() {
@@ -217,5 +217,27 @@ export function useAIWritingCorrection() {
       })
       return data
     },
+  })
+}
+
+// Work Phrases
+export function useWorkPhrases(params?: { search?: string; scene?: string; page?: number }) {
+  return useQuery<PaginatedResponse<WorkPhrase>>({
+    queryKey: ['workPhrases', params],
+    queryFn: async () => {
+      const { data } = await api.get('/work-phrases/', { params })
+      return data
+    },
+  })
+}
+
+export function useWorkPhrase(id: number | string) {
+  return useQuery<WorkPhrase>({
+    queryKey: ['workPhrase', id],
+    queryFn: async () => {
+      const { data } = await api.get(`/work-phrases/${id}/`)
+      return data
+    },
+    enabled: !!id,
   })
 }

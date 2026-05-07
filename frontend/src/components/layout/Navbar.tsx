@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, BookOpen, Sparkles, RefreshCw, Search, Menu, X } from 'lucide-react'
+import { Home, BookOpen, Sparkles, RefreshCw, Search, MessageSquare, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '../../lib/utils'
 
@@ -9,6 +9,7 @@ const navItems = [
   { to: '/daily', label: 'Daily Words', icon: Sparkles },
   { to: '/review', label: 'Review', icon: RefreshCw },
   { to: '/search', label: 'Search', icon: Search },
+  { to: '/work-phrases', label: 'Work Phrases', icon: MessageSquare },
 ]
 
 export default function Navbar() {

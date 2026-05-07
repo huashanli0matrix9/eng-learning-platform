@@ -8,6 +8,8 @@ import Review from './pages/Review'
 import Categories from './pages/Categories'
 import SignIn from './pages/SignIn'
 import WordSearch from './pages/WordSearch'
+import WorkPhrases from './pages/WorkPhrases'
+import WorkPhraseDetail from './pages/WorkPhraseDetail'
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
         <Route path="/review" element={<Review />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/search" element={<WordSearch />} />
+        <Route path="/work-phrases" element={<WorkPhrases />} />
+        <Route path="/work-phrases/:id" element={<WorkPhraseDetail />} />
         <Route path="/signin" element={<SignIn />} />
       </Routes>
     </Layout>

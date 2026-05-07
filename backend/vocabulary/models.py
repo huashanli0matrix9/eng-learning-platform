@@ -116,6 +116,26 @@ class WritingExercise(models.Model):
         return f"Writing: {self.chinese_sentence[:40]}... ({self.word.word})"
 
 
+class WorkPhrase(models.Model):
+    """Work-related phrases with context and usage notes. Independent of Word model."""
+    phrase = models.CharField(max_length=200, db_index=True)
+    meaning_zh = models.CharField(max_length=200, help_text="Chinese meaning")
+    scene = models.CharField(max_length=200, blank=True, help_text="Usage scenario (e.g. client communication, project tracking)")
+    context_en = models.TextField(blank=True, help_text="Full English context paragraph")
+    target_sentence = models.TextField(help_text="Key sentence demonstrating the phrase")
+    context_zh = models.TextField(blank=True, help_text="Chinese translation of context")
+    usage_note = models.TextField(blank=True, help_text="Usage explanation in Chinese")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['phrase']
+        verbose_name = 'work phrase'
+        verbose_name_plural = 'work phrases'
+
+    def __str__(self):
+        return self.phrase
+
+
 class Bookmark(models.Model):
     """User's bookmarked/favorite words."""
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='word_bookmarks')
