@@ -1,18 +1,124 @@
+# Workflow definitions for AI-Agent development pipeline
+# Each workflow orchestrates multiple agents in sequence.
+# Context flows from one agent's output into the next agent's input.
+# The orchestrator reads this file, renders the current prompt with context,
+# then routes output to the next step.
+
 workflows:
   - name: feature_development_workflow
-    description: Full AI-assisted development workflow
-    steps:
-      - agent: product_analyst
-        task: Convert requirement into development tasks
+    description: >
+      Full AI-assisted feature development cycle.
+      Takes a user requirement → analysis → backend → frontend → test → review
+      → auto-commit and push to feature/ielts-mvp.
+    version: "1.0"
+    branch: feature/ielts-mvp
 
+    steps:
+      # Step 1 — Product Analyst: understand requirement → task list
+      - agent: product_analyst
+        task: Convert user requirement into atomic development tasks
+        context_inputs:
+          - user_request          # The raw requirement from the user
+          - project_overview      # High-level project context (tech stack, conventions)
+        output_key: task_list     # Named output — consumed by later steps
+        guardrails:
+          - agent_must_not_write_code
+          - agent_must_not_modify_files
+          - agent_must_not_call_tools
+
+      # Step 2 — Backend Developer: implement backend changes
       - agent: backend_developer
-        task: Implement backend changes
+        task: Implement backend module(s) from the task list
+        context_inputs:
+          - task_list             # From product_analyst
+          - project_structure     # Current backend file tree
+          - existing_models       # Existing model definitions
+        output_key: backend_changes
+        guardrails:
+          - implement_one_task_at_a_time
+          - read_existing_code_first
+          - run_backend_check_and_test
+          - run_makemigrations_and_migrate
+
+      # Step 3 — Frontend Developer: implement frontend changes
+      - agent: frontend_developer
+        task: Implement frontend module(s) from the task list
+        context_inputs:
+          - task_list             # From product_analyst
+          - project_structure     # Current frontend file tree
+          - backend_changes       # So frontend knows the API shape
+        output_key: frontend_changes
+        guardrails:
+          - implement_one_task_at_a_time
+          - run_typecheck_before_build
+          - run_frontend_test
+
+      # Step 4 — Test Engineer: verify everything
+      - agent: test_engineer
+        task: Add tests for new code, run all tests, report results
+        context_inputs:
+          - task_list
+          - backend_changes
+          - frontend_changes
+        output_key: test_report
+        guardrails:
+          - do_not_modify_business_logic
+          - run_full_test_suite
+
+      # Step 5 — Code Reviewer: final quality gate
+      - agent: code_reviewer
+        task: Review all changes, check quality, security, and completeness
+        context_inputs:
+          - task_list
+          - backend_changes
+          - frontend_changes
+          - test_report
+        output_key: review_result
+        guardrails:
+          - do_not_modify_code_unless_asked
+          - verify_all_acceptance_criteria_met
+
+      # Final — Commit & push (conditional on review pass)
+      - action: git_commit
+        condition: review_result.decision == "approve"
+        commit_message_template: |
+          feat: {{feature_summary}}
+
+          {{task_summary_lines}}
+        push_branch: feature/ielts-mvp
+
+  - name: quick_fix_workflow
+    description: >
+      Lightweight workflow for small bug fixes or hotfixes.
+      Skips analysis and review, goes straight to fix → test → commit.
+    version: "1.0"
+    branch: feature/ielts-mvp
+
+    steps:
+      - agent: backend_developer
+        task: Apply the fix
+        context_inputs:
+          - bug_description
+          - project_structure
+        output_key: fix_changes
+        guardrails:
+          - run_backend_check_and_test
 
       - agent: frontend_developer
-        task: Implement frontend changes
+        task: Apply frontend fix if applicable
+        context_inputs:
+          - bug_description
+          - project_structure
+        output_key: frontend_fix_changes
 
       - agent: test_engineer
-        task: Add and run tests
+        task: Verify fix doesn't break anything
+        context_inputs:
+          - fix_changes
+          - frontend_fix_changes
+        output_key: fix_verification
 
-      - agent: code_reviewer
-        task: Review final changes
+      - action: git_commit
+        condition: fix_verification.all_tests_pass == true
+        commit_message_template: |
+          fix: {{bug_description}}

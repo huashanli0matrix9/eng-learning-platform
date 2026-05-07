@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Category, Word, WordList, UserProgress,
     Phrase, ListeningSentence, ReadingSentence,
-    WritingExercise, Bookmark, WordLearningProgress,
+    WritingExercise, Bookmark, WordLearningProgress, PhrasalVerb, PhrasalVerbCategory,
 )
 
 
@@ -110,3 +110,26 @@ class WordLearningProgressSerializer(serializers.ModelSerializer):
         model = WordLearningProgress
         fields = ['id', 'word', 'module', 'completed', 'score', 'details', 'updated_at']
         read_only_fields = ['user', 'updated_at']
+
+
+class PhrasalVerbCategorySerializer(serializers.ModelSerializer):
+    phrase_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PhrasalVerbCategory
+        fields = ['id', 'name', 'slug', 'description', 'order', 'phrase_count']
+
+    def get_phrase_count(self, obj):
+        return obj.phrasal_verbs.count()
+
+
+class PhrasalVerbSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True, default=None)
+    category_slug = serializers.CharField(source='category.slug', read_only=True, default=None)
+
+    class Meta:
+        model = PhrasalVerb
+        fields = [
+            'id', 'phrase', 'meaning_zh', 'category', 'category_name', 'category_slug',
+            'context_en', 'target_sentence', 'context_zh', 'usage_note', 'created_at',
+        ]

@@ -9,7 +9,7 @@ import random
 from .models import (
     Category, Word, WordList, UserProgress,
     Phrase, ListeningSentence, ReadingSentence,
-    WritingExercise, Bookmark, WordLearningProgress,
+    WritingExercise, Bookmark, WordLearningProgress, PhrasalVerb, PhrasalVerbCategory,
 )
 from .filters import WordFilter
 from .serializers import (
@@ -18,6 +18,7 @@ from .serializers import (
     PhraseSerializer, ListeningSentenceSerializer,
     ReadingSentenceSerializer, WritingExerciseSerializer,
     BookmarkSerializer, WordLearningProgressSerializer,
+    PhrasalVerbCategorySerializer, PhrasalVerbSerializer,
 )
 
 
@@ -225,6 +226,19 @@ class WordLearningProgressViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class PhrasalVerbCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = PhrasalVerbCategory.objects.annotate(phrase_count=Count('phrasal_verbs')).all()
+    serializer_class = PhrasalVerbCategorySerializer
+    lookup_field = 'slug'
+
+
+class PhrasalVerbViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = PhrasalVerb.objects.select_related('category').all()
+    serializer_class = PhrasalVerbSerializer
+    search_fields = ['phrase', 'meaning_zh', 'target_sentence']
+    filterset_fields = ['category']
 
 
 # --- AI API placeholders ---

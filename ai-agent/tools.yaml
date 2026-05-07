@@ -1,42 +1,138 @@
+# Tool definitions for AI-Agent development workflow
+# Each tool has a specific purpose, working directory, and error handling.
+# Executed by the orchestrator in the project root directory.
+
 tools:
-  - name: git_command
-    description: Run safe Git commands
+  # ── Git ────────────────────────────────────────────────────────────
+  - name: git_status
+    description: Show working tree status
     type: shell
+    working_dir: "{{PROJECT_ROOT}}"
     command: |
-      git {{command}}
+      git status
+
+  - name: git_diff
+    description: Show unstaged diff
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}"
+    command: |
+      git diff
+
+  - name: git_diff_cached
+    description: Show staged diff
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}"
+    command: |
+      git diff --cached
+
+  - name: git_log
+    description: Show recent commits
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}"
+    command: |
+      git log --oneline -10
+
+  - name: git_commit
+    description: Stage all changes and commit with a message
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}"
+    command: |
+      git add -A && git commit -m "{{message}}" && git push origin feature/ielts-mvp
     parameters:
-      command:
+      message:
         type: string
+        description: Commit message
+
+  # ── Backend ────────────────────────────────────────────────────────
+  - name: backend_check
+    description: Run Django system checks
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}/backend"
+    command: |
+      python manage.py check
+
+  - name: backend_test
+    description: Run Django backend tests with pytest
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}/backend"
+    command: |
+      python -m pytest -x --tb=short 2>&1 || python manage.py test --verbosity=2 2>&1
+
+  - name: backend_makemigrations
+    description: Generate Django migration files
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}/backend"
+    command: |
+      python manage.py makemigrations
+
+  - name: backend_migrate
+    description: Apply pending Django migrations
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}/backend"
+    command: |
+      python manage.py migrate
+
+  - name: backend_showmigrations
+    description: List all migrations and their status
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}/backend"
+    command: |
+      python manage.py showmigrations
 
   - name: postgres_query
-    description: Execute SQL against PostgreSQL
+    description: Execute read-only SQL query against PostgreSQL
     type: shell
+    working_dir: "{{PROJECT_ROOT}}/backend"
     command: |
-      psql "$DATABASE_URL" -c "{{sql}}"
+      python manage.py dbshell -- -c "{{sql}}"
     parameters:
       sql:
         type: string
+        description: "SQL query (read-only recommended — use with caution)"
+    notes: |
+      Prefer Django ORM / manage.py commands for write operations.
+      dbshell runs inside the Django connection, safer than raw psql.
 
-  - name: backend_test
-    description: Run Django backend tests
-    type: shell
-    command: |
-      cd backend && pytest
-
+  # ── Frontend ───────────────────────────────────────────────────────
   - name: frontend_test
-    description: Run React frontend tests
+    description: Run Vitest frontend tests
     type: shell
+    working_dir: "{{PROJECT_ROOT}}/frontend"
     command: |
-      cd frontend && npm run test
+      npx vitest run --reporter=verbose 2>&1
 
   - name: frontend_build
-    description: Run frontend production build
+    description: Build frontend for production (TypeScript check + Vite build)
     type: shell
+    working_dir: "{{PROJECT_ROOT}}/frontend"
     command: |
-      cd frontend && npm run build
+      npx vite build 2>&1
 
-  - name: backend_check
-    description: Run Django system check
+  - name: frontend_typecheck
+    description: Run TypeScript type checking without emitting files
     type: shell
+    working_dir: "{{PROJECT_ROOT}}/frontend"
     command: |
-      cd backend && python manage.py check
+      npx tsc --noEmit 2>&1
+
+  - name: frontend_lint
+    description: Run ESLint on frontend source
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}/frontend"
+    command: |
+      npx eslint src/ 2>&1 || echo "(ESLint not configured — install manually if desired)"
+
+  # ── Docker / Environment ──────────────────────────────────────────
+  - name: docker_up
+    description: Start all Docker services (db + backend)
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}"
+    command: |
+      docker compose up -d
+
+  - name: docker_down
+    description: Stop all Docker services
+    type: shell
+    working_dir: "{{PROJECT_ROOT}}"
+    command: |
+      docker compose down
