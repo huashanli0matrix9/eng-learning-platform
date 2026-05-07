@@ -105,7 +105,7 @@ export interface WordLearningProgress {
   updated_at: string
 }
 
-export interface WorkPhrase {
+export interface PhrasalVerb {
   id: number
   phrase: string
   meaning_zh: string

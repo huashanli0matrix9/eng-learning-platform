@@ -1,9 +1,9 @@
 import { useParams, Link } from 'react-router-dom'
-import { useWorkPhrase } from '../hooks/useVocabulary'
+import { usePhrasalVerb } from '../hooks/useVocabulary'
 
-export default function WorkPhraseDetail() {
+export default function PhrasalVerbDetail() {
   const { id } = useParams<{ id: string }>()
-  const { data: phrase, isLoading } = useWorkPhrase(id!)
+  const { data: phrase, isLoading } = usePhrasalVerb(id!)
 
   if (isLoading) {
     return (
@@ -17,15 +17,15 @@ export default function WorkPhraseDetail() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12 text-center">
         <p className="text-gray-500 mb-4">Phrase not found.</p>
-        <Link to="/work-phrases" className="text-blue-600 hover:underline">← Back to Work Phrases</Link>
+        <Link to="/phrasal-verbs" className="text-blue-600 hover:underline">← Back to Phrasal Verbs</Link>
       </div>
     )
   }
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <Link to="/work-phrases" className="text-blue-600 hover:underline text-sm mb-6 inline-block">
-        ← Back to Work Phrases
+      <Link to="/phrasal-verbs" className="text-blue-600 hover:underline text-sm mb-6 inline-block">
+        ← Back to Phrasal Verbs
       </Link>
 
       <div className="bg-white rounded-xl border p-6 md:p-8">

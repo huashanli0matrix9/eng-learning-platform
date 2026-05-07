@@ -116,11 +116,12 @@ class WritingExercise(models.Model):
         return f"Writing: {self.chinese_sentence[:40]}... ({self.word.word})"
 
 
-class WorkPhrase(models.Model):
-    """Work-related phrases with context and usage notes. Independent of Word model."""
+class PhrasalVerb(models.Model):
+    """Phrasal verbs with context and usage notes. Independent of Word model.
+    Covers work, daily life, and mixed-scenario phrasal verbs."""
     phrase = models.CharField(max_length=200, db_index=True)
     meaning_zh = models.CharField(max_length=200, help_text="Chinese meaning")
-    scene = models.CharField(max_length=200, blank=True, help_text="Usage scenario (e.g. client communication, project tracking)")
+    scene = models.CharField(max_length=200, blank=True, help_text="Usage scenario (e.g. client communication, daily life)")
     context_en = models.TextField(blank=True, help_text="Full English context paragraph")
     target_sentence = models.TextField(help_text="Key sentence demonstrating the phrase")
     context_zh = models.TextField(blank=True, help_text="Chinese translation of context")
@@ -129,8 +130,8 @@ class WorkPhrase(models.Model):
 
     class Meta:
         ordering = ['phrase']
-        verbose_name = 'work phrase'
-        verbose_name_plural = 'work phrases'
+        verbose_name = 'phrasal verb'
+        verbose_name_plural = 'phrasal verbs'
 
     def __str__(self):
         return self.phrase

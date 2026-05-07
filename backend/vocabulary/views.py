@@ -9,7 +9,7 @@ import random
 from .models import (
     Category, Word, WordList, UserProgress,
     Phrase, ListeningSentence, ReadingSentence,
-    WritingExercise, Bookmark, WordLearningProgress, WorkPhrase,
+    WritingExercise, Bookmark, WordLearningProgress, PhrasalVerb,
 )
 from .filters import WordFilter
 from .serializers import (
@@ -18,7 +18,7 @@ from .serializers import (
     PhraseSerializer, ListeningSentenceSerializer,
     ReadingSentenceSerializer, WritingExerciseSerializer,
     BookmarkSerializer, WordLearningProgressSerializer,
-    WorkPhraseSerializer,
+    PhrasalVerbSerializer,
 )
 
 
@@ -228,9 +228,9 @@ class WordLearningProgressViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class WorkPhraseViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = WorkPhrase.objects.all()
-    serializer_class = WorkPhraseSerializer
+class PhrasalVerbViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = PhrasalVerb.objects.all()
+    serializer_class = PhrasalVerbSerializer
     search_fields = ['phrase', 'meaning_zh', 'scene', 'target_sentence']
     filterset_fields = ['scene']
 

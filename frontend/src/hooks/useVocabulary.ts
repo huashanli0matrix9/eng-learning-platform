@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
-import type { Category, Word, PaginatedResponse, UserProgress, VocabularyStats, Bookmark, WordLearningProgress, WorkPhrase } from '../types'
+import type { Category, Word, PaginatedResponse, UserProgress, VocabularyStats, Bookmark, WordLearningProgress, PhrasalVerb } from '../types'
 
 // Categories
 export function useCategories() {
@@ -220,22 +220,22 @@ export function useAIWritingCorrection() {
   })
 }
 
-// Work Phrases
-export function useWorkPhrases(params?: { search?: string; scene?: string; page?: number }) {
-  return useQuery<PaginatedResponse<WorkPhrase>>({
-    queryKey: ['workPhrases', params],
+// Phrasal Verbs
+export function usePhrasalVerbs(params?: { search?: string; scene?: string; page?: number }) {
+  return useQuery<PaginatedResponse<PhrasalVerb>>({
+    queryKey: ['phrasalVerbs', params],
     queryFn: async () => {
-      const { data } = await api.get('/work-phrases/', { params })
+      const { data } = await api.get('/phrasal-verbs/', { params })
       return data
     },
   })
 }
 
-export function useWorkPhrase(id: number | string) {
-  return useQuery<WorkPhrase>({
-    queryKey: ['workPhrase', id],
+export function usePhrasalVerb(id: number | string) {
+  return useQuery<PhrasalVerb>({
+    queryKey: ['phrasalVerb', id],
     queryFn: async () => {
-      const { data } = await api.get(`/work-phrases/${id}/`)
+      const { data } = await api.get(`/phrasal-verbs/${id}/`)
       return data
     },
     enabled: !!id,

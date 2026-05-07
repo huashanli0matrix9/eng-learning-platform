@@ -1,11 +1,11 @@
 import csv
 import os
 from django.core.management.base import BaseCommand, CommandError
-from vocabulary.models import WorkPhrase
+from vocabulary.models import PhrasalVerb
 
 
 class Command(BaseCommand):
-    help = 'Import work phrases from a CSV file'
+    help = 'Import phrasal verbs from a CSV file'
 
     def add_arguments(self, parser):
         parser.add_argument('csv_path', type=str, help='Path to the CSV file')
@@ -23,8 +23,8 @@ class Command(BaseCommand):
             raise CommandError(f'File not found: {csv_path}')
 
         if replace:
-            deleted, _ = WorkPhrase.objects.all().delete()
-            self.stdout.write(f'Deleted {deleted} existing work phrases')
+            deleted, _ = PhrasalVerb.objects.all().delete()
+            self.stdout.write(f'Deleted {deleted} existing phrasal verbs')
 
         with open(csv_path, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
@@ -45,7 +45,7 @@ class Command(BaseCommand):
                     continue
 
                 try:
-                    WorkPhrase.objects.create(
+                    PhrasalVerb.objects.create(
                         phrase=phrase_text,
                         meaning_zh=row.get('meaning_zh', '').strip(),
                         scene=row.get('scene', '').strip(),
@@ -60,5 +60,5 @@ class Command(BaseCommand):
                     errors += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f'Done! Created {created} work phrases, {errors} errors'
+            f'Done! Created {created} phrasal verbs, {errors} errors'
         ))

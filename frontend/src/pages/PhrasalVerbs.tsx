@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useWorkPhrases } from '../hooks/useVocabulary'
+import { usePhrasalVerbs } from '../hooks/useVocabulary'
 
 const SCENE_COLORS: Record<string, string> = {
   'client communication': 'bg-blue-100 text-blue-800',
@@ -29,18 +29,18 @@ function getSceneBadge(scene: string) {
   )
 }
 
-export default function WorkPhrases() {
+export default function PhrasalVerbs() {
   const [search, setSearch] = useState('')
   const [sceneFilter, setSceneFilter] = useState('')
-  const { data, isLoading } = useWorkPhrases({ search: search || undefined, scene: sceneFilter || undefined })
+  const { data, isLoading } = usePhrasalVerbs({ search: search || undefined, scene: sceneFilter || undefined })
 
   // Collect unique scenes for the filter dropdown
   const scenes = [...new Set(data?.results?.map((p) => p.scene).filter(Boolean) || [])]
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-2">Work Phrases</h1>
-      <p className="text-gray-600 mb-6">职场常用短语 · 看语境 学表达</p>
+      <h1 className="text-3xl font-bold mb-2">Phrasal Verbs</h1>
+      <p className="text-gray-600 mb-6">动词短语 · 看语境 学表达</p>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
@@ -73,7 +73,7 @@ export default function WorkPhrases() {
           {data.results.map((phrase) => (
             <Link
               key={phrase.id}
-              to={`/work-phrases/${phrase.id}`}
+              to={`/phrasal-verbs/${phrase.id}`}
               className="block p-5 bg-white rounded-xl border hover:shadow-md hover:border-blue-300 transition-all"
             >
               <div className="flex items-start justify-between mb-2">

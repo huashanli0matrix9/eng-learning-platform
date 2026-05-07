@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Category, Word, WordList, UserProgress,
     Phrase, ListeningSentence, ReadingSentence,
-    WritingExercise, Bookmark, WordLearningProgress, WorkPhrase,
+    WritingExercise, Bookmark, WordLearningProgress, PhrasalVerb,
 )
 
 
@@ -112,9 +112,9 @@ class WordLearningProgressSerializer(serializers.ModelSerializer):
         read_only_fields = ['user', 'updated_at']
 
 
-class WorkPhraseSerializer(serializers.ModelSerializer):
+class PhrasalVerbSerializer(serializers.ModelSerializer):
     class Meta:
-        model = WorkPhrase
+        model = PhrasalVerb
         fields = [
             'id', 'phrase', 'meaning_zh', 'scene', 'context_en',
             'target_sentence', 'context_zh', 'usage_note', 'created_at',
